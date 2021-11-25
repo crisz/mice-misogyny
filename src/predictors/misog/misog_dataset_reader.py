@@ -101,7 +101,7 @@ class MisogDatasetReader(DatasetReader):
         labels = [None] * len(data_indices)
         for i, idx in enumerate(data_indices):
             sentence = data[idx]
-            label = labels[idx]
+            label = labels[idx][0]
             strings[i] = sentence
             labels[i] = label
 
@@ -119,7 +119,7 @@ class MisogDatasetReader(DatasetReader):
         data_indices, data, labels = self.get_data_indices(subset)
         for idx in data_indices:
             sentence = data[idx]
-            label = labels[idx]
+            label = labels[idx][0]
             if len(sentence) == 0 or len(label) == 0:
                 continue
             yield self.text_to_instance(sentence, label)
