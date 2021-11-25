@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
 
 TRAIN_VAL_SPLIT_RATIO = 0.9
 
-DATASET_PATH_BASE = Path('..') / 'data'
+DATASET_PATH_BASE = Path('.') / 'data'
 DEV_PATH = DATASET_PATH_BASE / 'misogyny_EN' / 'miso_dev.tsv'
 TRAIN_PATH = DATASET_PATH_BASE / 'misogyny_EN' / 'miso_train.tsv'
 TEST_PATH = DATASET_PATH_BASE / 'misogyny_EN' / 'miso_test.tsv'
