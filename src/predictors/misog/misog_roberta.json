@@ -1,6 +1,6 @@
 {
     "dataset_reader": {
-        "type": "misog",
+        "type": "src.predictors.misog.misog_dataset_reader",
         "token_indexers": {
             "tokens": {
                 "type": "pretrained_transformer",
