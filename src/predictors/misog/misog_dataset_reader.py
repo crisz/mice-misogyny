@@ -120,7 +120,7 @@ class MisogDatasetReader(DatasetReader):
         for idx in data_indices:
             sentence = data[idx]
             label = labels[idx][0]
-            if len(sentence) == 0 or len(label) == 0:
+            if len(sentence) == 0:
                 continue
             yield self.text_to_instance(sentence, label)
 
