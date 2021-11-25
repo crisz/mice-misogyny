@@ -21,6 +21,7 @@ import os.path as osp
 import tarfile
 from tqdm import tqdm as tqdm
 import numpy as np
+import pandas as pd
 import math
 from sklearn.datasets import fetch_20newsgroups
 
@@ -50,6 +51,16 @@ class MisogDatasetReader(DatasetReader):
 
         self.random_seed = 0
         np.random.seed(self.random_seed)
+
+    @staticmethod
+    def load_misogyny_dataset(path):
+        df = pd.read_csv(path, sep='\t')[['text', 'misogynous']]
+        npy = df.values
+        dataset = np.swapaxes(npy, 0, 1)
+        data, labels = dataset
+        labels = labels.astype(np.int)
+        labels = np.array(labels).reshape(-1, 1)
+        return labels, data
 
     def load_misogyny_train_dataset(self):
         return self.load_misogyny_dataset(TRAIN_PATH)
