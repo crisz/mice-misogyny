@@ -36,7 +36,7 @@ TRAIN_PATH = DATASET_PATH_BASE / 'misogyny_EN' / 'miso_train.tsv'
 TEST_PATH = DATASET_PATH_BASE / 'misogyny_EN' / 'miso_test.tsv'
 
 
-@DatasetReader.register("newsgroups")
+@DatasetReader.register("misog")
 class MisogDatasetReader(DatasetReader):
     def __init__(self,
                  token_indexers: Dict[str, TokenIndexer] = None,
