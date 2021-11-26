@@ -34,6 +34,7 @@ def train_epoch(epoch, editor_tokenizer, editor_model, device, loader, optim):
         lm_labels = data['target_ids'].to(device, dtype = torch.long)
         lm_labels[lm_labels[:, :] == editor_tokenizer.pad_token_id] = -100
         ids = data['source_ids'].to(device, dtype = torch.long)
+        print("Shape: ", ids.shape, lm_labels.shape)
         outputs = editor_model(input_ids = ids, labels=lm_labels)
         loss = outputs[0]
         total_loss += loss.item()
@@ -59,6 +60,7 @@ def validate_epoch(epoch, editor_tokenizer, editor_model, device, loader):
         lm_labels = data['target_ids'].to(device, dtype = torch.long)        
         lm_labels[lm_labels[:, :] == editor_tokenizer.pad_token_id] = -100
         ids = data['source_ids'].to(device, dtype = torch.long)
+        print("Shape: ", ids.shape, lm_labels.shape)
 
         outputs = editor_model(input_ids = ids, labels=lm_labels)
         loss = outputs[0]
