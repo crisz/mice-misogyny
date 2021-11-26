@@ -27,6 +27,7 @@ from munch import Munch
 
 # local imports
 from src.predictors.imdb.imdb_dataset_reader import ImdbDatasetReader
+from src.predictors.misog.misog_dataset_reader import MisogDatasetReader
 from src.predictors.newsgroups.newsgroups_dataset_reader \
         import NewsgroupsDatasetReader
 from src.predictors.race.race_dataset_reader import RaceDatasetReader
@@ -47,7 +48,7 @@ def get_shared_parsers():
     meta_parser.add_argument("-task", required=True, 
             help='Name of task. Currently, only RACE, IMDB, \
                     and Newsgroups are supported.', 
-            choices=['race', 'imdb', 'newsgroups'])
+            choices=['race', 'imdb', 'newsgroups', 'misog'])
     meta_parser.add_argument("-results_dir", default="results", 
             help='Results dir. Where to store results.')
 
@@ -69,7 +70,7 @@ def get_stage_one_parsers():
     """ Helper function to get parsers for Stage 1. """
 
     train_parser = argparse.ArgumentParser()
-    train_parser.add_argument("-train_batch_size", default=4, type=int)
+    train_parser.add_argument("-train_batch_size", default=1, type=int)
     train_parser.add_argument("-val_batch_size", default=1, type=int)
     train_parser.add_argument("-num_epochs", default=10, type=int)
     train_parser.add_argument("-lr", default=5e-5, type=float)
@@ -172,7 +173,7 @@ def write_args(args_path, args):
 ####################################################################
 
 def get_dataset_reader(task, predictor):
-    task_options = ["imdb", "race", "newsgroups"]
+    task_options = ["imdb", "race", "newsgroups", "misog"]
     if task not in task_options:
         raise NotImplementedError(f"Task {task} not implemented; \
                 must be one of {task_options}")
@@ -182,6 +183,8 @@ def get_dataset_reader(task, predictor):
                 tokenizer=predictor._dataset_reader._tokenizer)
     elif task == "race":
         return RaceDatasetReader()
+    elif task == "misog":
+        return MisogDatasetReader()
     elif task == "newsgroups":
         return NewsgroupsDatasetReader(
                 token_indexers=predictor._dataset_reader._token_indexers, 
@@ -197,12 +200,12 @@ def format_multiple_choice_input(context, question, options, answer_idx):
         formatted_str += " choice" + str(option_idx) + ": " + option
     return formatted_str
 
-def load_predictor(task, predictor_folder="trained_predictors/"):
-    task_options = ["imdb", "race", "newsgroups"]
+def load_predictor(task, predictor_folder="trained_predictors/models/"):
+    task_options = ["imdb", "race", "newsgroups", "misog"]
     if task not in task_options:
         raise NotImplementedError(f"Task {task} not implemented; \
                 must be one of {task_options}")
-    predictor_path = os.path.join(predictor_folder, task, "model/model.tar.gz")
+    predictor_path = os.path.join(predictor_folder, task, "model.tar.gz")
     if not os.path.exists(predictor_path):
         raise ValueError(f"Cannot find predictor path {predictor_path}")
     logger.info(f"Loading Predictor from: {predictor_path}")
@@ -211,6 +214,7 @@ def load_predictor(task, predictor_folder="trained_predictors/"):
         "imdb": ImdbDatasetReader,
         "newsgroups": NewsgroupsDatasetReader,
         "race": RaceDatasetReader,
+        "misog": MisogDatasetReader,
     }
 
     cuda_device = 0 if torch.cuda.is_available() else -1

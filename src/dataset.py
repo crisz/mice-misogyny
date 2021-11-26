@@ -83,6 +83,11 @@ class StageOneDataset(Dataset):
             pred_label = pred['label']
 
             label_to_use = pred_label if target_label == "pred" else orig_label
+            print(pred_label, orig_label)
+            print(">>> labels_to_ints")
+            print(labels_to_ints)
+            print(label_to_use)
+            label_to_use = str(label_to_use)
             label_idx = labels_to_ints[label_to_use]
 
             predictor_tokenized = get_predictor_tokenized(predictor, orig_inp)

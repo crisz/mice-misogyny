@@ -557,5 +557,5 @@ class GradientMasker(Masker):
         """ Helper function to get indices of Editor tokens to mask. """
         
         editor_mask_indices = self.get_important_editor_tokens(
-                editable_seg, pred_idx, editor_toks, **kwargs)
+                editable_seg, pred_idx, editor_toks)
         return editor_mask_indices 

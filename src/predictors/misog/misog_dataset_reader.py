@@ -29,7 +29,7 @@ from src.predictors.predictor_utils import clean_text
 
 logger = logging.getLogger(__name__)
 
-TRAIN_VAL_SPLIT_RATIO = 0.9
+TRAIN_VAL_SPLIT_RATIO = 0.7
 
 DATASET_PATH_BASE = Path('.') / 'data'
 DEV_PATH = DATASET_PATH_BASE / 'misogyny_EN' / 'miso_dev.tsv'
@@ -80,14 +80,17 @@ class MisogDatasetReader(DatasetReader):
             subset = 'train'
             only_test_indices = True
 
-        data = None
         if subset == 'train':
             labels, data = self.load_misogyny_train_dataset()
         elif subset == 'test':
             labels, data = self.load_misogyny_val_dataset()
+        else:
+            raise RuntimeError("{} is not a valid subset".format(subset))
 
         data_indices = np.array(range(len(data)))
         num_train = math.ceil(TRAIN_VAL_SPLIT_RATIO * len(data_indices))
+        print("num_train: ", num_train)
+        print("data_indices_len: ", len(data_indices))
         if only_train_indices:
             data_indices = data_indices[:num_train]
         if only_test_indices:
@@ -97,20 +100,31 @@ class MisogDatasetReader(DatasetReader):
 
     def get_inputs(self, subset, return_labels = False):
         data_indices, data, labels = self.get_data_indices(subset)
-        strings = [None] * len(data_indices)
-        labels = [None] * len(data_indices)
+        # strings = [None] * len(data_indices)
+        # labels = [None] * len(data_indices)
+        print(">>> get_inputs: data_indices length is ", len(data_indices))
+        print(">>> Iterating")
+        print(data[0], labels[0])
+        strings = []
+        out_labels = []
         for i, idx in enumerate(data_indices):
             sentence = data[idx]
+            print(sentence, labels[idx])
+            if labels[idx] is None:
+                continue
             label = int(labels[idx][0])
-            strings[i] = sentence
-            labels[i] = label
+            strings.append(sentence)
+            out_labels.append(label)
 
-        strings = [x for x in strings if x is not None]
-        labels = [x for x in labels if x is not None]
-        assert len(strings) == len(labels)
+        print(">>> string length: ", len(strings))
+        print(">>> labels length: ", len(out_labels))
+        # strings = [x for x in strings if x is not None]
+        # labels = [x for x in labels if x is not None]
+        assert len(strings) == len(out_labels)
 
         if return_labels:
-            return strings, labels
+            print("return labels")
+            return strings, out_labels
         return strings
 
     @overrides
@@ -119,6 +133,8 @@ class MisogDatasetReader(DatasetReader):
         data_indices, data, labels = self.get_data_indices(subset)
         for idx in data_indices:
             sentence = data[idx]
+            if labels[idx] == None:
+                continue
             label = int(labels[idx][0])
             if len(sentence) == 0:
                 continue

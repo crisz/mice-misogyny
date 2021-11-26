@@ -78,6 +78,9 @@ def get_datasets(predictor, dr, masker, data_dir, train_inputs, val_inputs,
     train_data_path = os.path.join(data_dir, "train_data.csv")
     val_data_path = os.path.join(data_dir, "val_data.csv")
 
+    print("*** >> ")
+    print(train_inputs)
+
     # If data already exists for experiment, read data
     if os.path.exists(train_data_path) and os.path.exists(val_data_path):
         logger.info("Data for Editor fine-tuning already exist.")
@@ -163,8 +166,13 @@ def get_task_data(args, dr):
     if args.meta.task == 'race':
         strings = dr.get_inputs('train')
         labels = [int(s['answer_idx']) for s in strings]
-    elif args.meta.task == "newsgroups" or args.meta.task == "imdb":
+    elif args.meta.task == "newsgroups" or args.meta.task == "imdb" or args.meta.task == "misog":
         strings, labels = dr.get_inputs('train', return_labels=True)
+
+    print("strings")
+    print(len(strings), strings[0])
+    print("labels")
+    print(len(labels), labels[0])
     
     string_indices = np.array(range(len(strings)))
     np.random.shuffle(string_indices)
@@ -233,11 +241,14 @@ def run_train_editor(predictor, dr, args):
     # Load original task data
     train_inputs, val_inputs, train_labels, val_labels = \
             get_task_data(args, dr)
+    print(">>>> Using train_inputs: ", len(train_inputs))
 
     # Get datasets for Editor training
     train_dataset, val_dataset = get_datasets(predictor, dr, masker, 
             data_dir, train_inputs, val_inputs, train_labels, val_labels, 
             editor_tokenizer, args)
+    print("Train dataset len: ", len(train_dataset))
+    print("Val dataset len: ", len(val_dataset))
     train_data_loader = DataLoader(train_dataset, **train_params)
     val_data_loader = DataLoader(val_dataset, **val_params)
 
