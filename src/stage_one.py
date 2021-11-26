@@ -55,6 +55,7 @@ def validate_epoch(epoch, editor_tokenizer, editor_model, device, loader):
     editor_model.eval()
     total_loss = 0
     logger.info(f"Validating epoch: {epoch}")
+    torch.cuda.empty_cache()
 
     for _, data in tqdm(enumerate(loader, 0), total = len(loader)):
         lm_labels = data['target_ids'].to(device, dtype = torch.long)        
