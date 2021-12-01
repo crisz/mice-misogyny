@@ -62,7 +62,7 @@ def get_shared_parsers():
                     l1/signed/l2 determine how to aggregate over the emb dim.")
 
     model_parser = argparse.ArgumentParser()
-    model_parser.add_argument("-model_max_length", default=700, 
+    model_parser.add_argument("-model_max_length", default=64, 
             help="Maximum number of tokens that Editor model can take")
     return {"meta": meta_parser, "mask": mask_parser, "model": model_parser}
 
@@ -228,7 +228,7 @@ def load_predictor(task, predictor_folder="trained_predictors/models/"):
 ########################### Model Utils ############################
 ####################################################################
 
-def load_base_t5(max_length=700):
+def load_base_t5(max_length=64):
     t5_config = T5Config.from_pretrained("t5-base", n_positions=max_length)
     model = T5ForConditionalGeneration.from_pretrained("t5-base", 
             config=t5_config)

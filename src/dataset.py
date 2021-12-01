@@ -19,7 +19,7 @@ class StageOneDataset(Dataset):
     def __init__(
             self, 
             tokenizer, 
-            max_length=700, 
+            max_length=64, 
             masked_strings=None, 
             targets=None
         ):
